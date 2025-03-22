@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Developer Portfolio</title>
+    <!-- Google Fonts - Press Start 2P -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="pixel-loader">
+            <div class="pixel"></div>
+            <div class="pixel"></div>
+            <div class="pixel"></div>
+            <div class="pixel"></div>
+            <div class="pixel"></div>
+        </div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Armaghan bin Zahid</h1>
+                <h2>Game Developer</h2>
+                <p>Creating immersive experiences through code and creativity</p>
+                <div class="cta-buttons">
+                    <a href="#projects" class="btn primary">View Projects</a>
+                    <a href="#contact" class="btn secondary">Get in Touch</a>
+                    <a href="assets/resume.pdf" class="btn secondary" download>Download Resume</a>
+                </div>
+            </div>
+            <div class="hero-pixel-art">
+                <div class="pixel-grid">
+                    <div class="retro-face">
+                        <div class="face"></div>
+                        <div class="eyes">
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <h2>Featured Projects</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/project-3.jpg" alt="Drone Shooting Game">
+                    <div class="project-overlay">
+                        <a href="https://play.google.com/store/apps/details?id=com.hw.militarydrone.drone.war" class="btn primary">View Project</a>
+                    </div>
+                </div>
+                <h3>Drone Shooting Game</h3>
+                <p>An exciting drone shooting game where players control a drone and engage in intense aerial combat.</p>
+                <div class="project-tech">
+                    <span>Unity</span>
+                    <span>C#</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/project-2.jpg" alt="Teacher Grading System">
+                    <div class="project-overlay">
+                        <a href="https://play.google.com/store/apps/details?id=com.hyperwatcher.gradeplease.school.teacher.simulator&hl=en" class="btn primary">View Project</a>
+                    </div>
+                </div>
+                <h3>Teacher Grading</h3>
+                <p>A comprehensive system for teachers to manage and grade student assignments efficiently.</p>
+                <div class="project-tech">
+                    <span>Unity</span>
+                    <span>C#</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/project-1.jpg" alt="Rocket Boost">
+                    <div class="project-overlay">
+                        <a href="https://armaghan.itch.io/rocket-boost" class="btn primary">View Project</a>
+                    </div>
+                </div>
+                <h3>Rocket Boost</h3>
+                <p>An engaging game where players navigate a rocket through challenging obstacles in space.</p>
+                <div class="project-tech">
+                    <span>Unity</span>
+                    <span>C#</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <h2>Skills & Expertise</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3>Game Development</h3>
+                <ul>
+                    <li>Unity Engine</li>
+                    <li>C# Programming</li>
+                    <li>Game Design</li>
+                    <li>2D Animation</li>
+                    <li>Multiplayer Game Development (Photon, Netcode for GameObjects)</li>
+                </ul>
+            </div>
+            <div class="skill-category">
+                <h3>Technical Skills</h3>
+                <ul>
+                    <li>Version Control (Git) & Unity Version Control</li>
+                    <li>Problem Solving</li>
+                    <li>Performance Optimization</li>
+                    <li>Cross-platform Development</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2>Get in Touch</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="social-links">
+                    <a href="https://github.com/ArmaghanBz"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/armaghan-bin-zahid-31967521a"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://armaghan.itch.io/"><i class="fas fa-gamepad"></i></a>
+                </div>
+                <p>Let's create something amazing together!</p>
+                <a href="mailto:armaghanbinzahid@gmail.com" class="btn primary">Email Me</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Armaghan bin Zahid's Portfolio. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/scene.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,838 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #ff6b6b;
+    --secondary-color: #4ecdc4;
+    --background-color: #2c3e50;
+    --text-color: #ffffff;
+    --accent-color: #ffe66d;
+    --pixel-size: 2px;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    image-rendering: pixelated;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.pixel-loader {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 2rem;
+}
+
+.pixel {
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+    border: 2px solid var(--accent-color);
+    animation: pixel-bounce 1s infinite;
+}
+
+.pixel:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.pixel:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.pixel:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.pixel:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+@keyframes pixel-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.loading-screen p {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    position: relative;
+    overflow: hidden;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--background-color),
+        var(--background-color) 10px,
+        rgba(78, 205, 196, 0.1) 10px,
+        rgba(78, 205, 196, 0.1) 20px
+    );
+}
+
+.hero-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-text {
+    flex: 1;
+    z-index: 1;
+}
+
+.hero-pixel-art {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.pixel-grid {
+    width: 300px;
+    height: 300px;
+    background-color: var(--background-color);
+    padding: 10px;
+    border: 4px solid var(--primary-color);
+    box-shadow: 4px 4px 0 var(--accent-color);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.retro-face {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-color);
+    border: 4px solid var(--accent-color);
+    border-radius: 50%;
+}
+
+.eyes {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+}
+
+.eye {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--text-color);
+    border: 4px solid var(--accent-color);
+    border-radius: 50%;
+    animation: blink 4s infinite;
+}
+
+.eye.left {
+    left: 25%;
+}
+
+.eye.right {
+    right: 25%;
+}
+
+.mouth {
+    position: absolute;
+    bottom: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 20px;
+    background-color: var(--text-color);
+    border: 4px solid var(--accent-color);
+    border-radius: 10px;
+}
+
+.coder {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: typing 1s infinite;
+}
+
+.head {
+    width: 30px;
+    height: 30px;
+    background-color: var(--primary-color);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.body {
+    width: 40px;
+    height: 50px;
+    background-color: var(--primary-color);
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.arm {
+    width: 15px;
+    height: 40px;
+    background-color: var(--primary-color);
+    position: absolute;
+    top: 35px;
+}
+
+.arm.left {
+    left: 50%;
+    transform: translateX(-100%);
+    animation: typing-left 1s infinite;
+}
+
+.arm.right {
+    right: 50%;
+    transform: translateX(100%);
+    animation: typing-right 1s infinite;
+}
+
+.leg {
+    width: 15px;
+    height: 40px;
+    background-color: var(--primary-color);
+    position: absolute;
+    bottom: -40px;
+}
+
+.leg.left {
+    left: 50%;
+    transform: translateX(-100%);
+}
+
+.leg.right {
+    right: 50%;
+    transform: translateX(100%);
+}
+
+.computer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 60px;
+    background-color: var(--secondary-color);
+    border: 4px solid var(--accent-color);
+}
+
+.screen {
+    width: 100px;
+    height: 40px;
+    background-color: var(--background-color);
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid var(--accent-color);
+}
+
+.keyboard {
+    width: 100%;
+    height: 15px;
+    background-color: var(--accent-color);
+    position: absolute;
+    bottom: 0;
+}
+
+.code-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.code-particles::before,
+.code-particles::after {
+    content: '01';
+    position: absolute;
+    color: var(--secondary-color);
+    font-size: 12px;
+    opacity: 0.3;
+    animation: float 3s infinite;
+}
+
+.code-particles::before {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.code-particles::after {
+    top: 60%;
+    right: 20%;
+    animation-delay: 1.5s;
+}
+
+.game-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.coin, .heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: var(--accent-color);
+    animation: float 2s infinite;
+}
+
+.coin {
+    top: 20%;
+    left: 20%;
+    border-radius: 50%;
+    animation-delay: 0s;
+}
+
+.heart {
+    top: 40%;
+    right: 20%;
+    transform: rotate(45deg);
+    animation-delay: 0.5s;
+}
+
+.heart::before,
+.heart::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+}
+
+.heart::before {
+    left: -10px;
+}
+
+.heart::after {
+    top: -10px;
+}
+
+@keyframes typing {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes typing-left {
+    0%, 100% { transform: translateX(-100%) rotate(0deg); }
+    50% { transform: translateX(-100%) rotate(-20deg); }
+}
+
+@keyframes typing-right {
+    0%, 100% { transform: translateX(100%) rotate(0deg); }
+    50% { transform: translateX(100%) rotate(20deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes blink {
+    0%, 48%, 52%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.1); }
+}
+
+.pixel-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.1) 0px,
+        rgba(255, 255, 255, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    ),
+    repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 0px,
+        rgba(255, 255, 255, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    text-shadow: 4px 4px 0 var(--accent-color);
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: var(--secondary-color);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border: 4px solid transparent;
+    box-shadow: 4px 4px 0 var(--accent-color);
+}
+
+.btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent-color);
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.btn.secondary {
+    background-color: transparent;
+    border: 4px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Projects Section */
+.projects {
+    padding: 5rem 5%;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--background-color),
+        var(--background-color) 10px,
+        rgba(255, 107, 107, 0.1) 10px,
+        rgba(255, 107, 107, 0.1) 20px
+    );
+}
+
+.projects h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 4px solid var(--primary-color);
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 4px 4px 0 var(--accent-color);
+}
+
+.project-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 8px 8px 0 var(--accent-color);
+}
+
+.project-image {
+    border: 4px solid var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(108, 92, 231, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.1);
+}
+
+.project-card:hover .project-overlay {
+    opacity: 1;
+}
+
+.project-overlay .btn {
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-overlay .btn {
+    transform: translateY(0);
+}
+
+.project-card h3 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.project-card p {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.project-tech span {
+    background-color: var(--primary-color);
+    border-radius: 0;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border: 2px solid var(--accent-color);
+}
+
+/* Skills Section */
+.skills {
+    padding: 5rem 5%;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--background-color),
+        var(--background-color) 10px,
+        rgba(255, 230, 109, 0.1) 10px,
+        rgba(255, 230, 109, 0.1) 20px
+    );
+}
+
+.skills h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.skill-category h3 {
+    color: var(--primary-color);
+    text-shadow: 2px 2px 0 var(--accent-color);
+}
+
+.skill-category ul {
+    list-style: none;
+}
+
+.skill-category li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.skill-category li::before {
+    content: "►";
+    color: var(--secondary-color);
+}
+
+/* Contact Section */
+.contact {
+    padding: 5rem 5%;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--background-color),
+        var(--background-color) 10px,
+        rgba(78, 205, 196, 0.1) 10px,
+        rgba(78, 205, 196, 0.1) 20px
+    );
+}
+
+.contact h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.contact-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+.social-links a {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.social-links a:hover {
+    color: var(--primary-color);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.contact-info p {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.contact-info .btn {
+    margin-top: 1rem;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--primary-color);
+    border-top: 4px solid var(--accent-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .hero-content {
+        max-width: 90%;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 5rem;
+    }
+
+    .hero-text {
+        margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .pixel-grid {
+        width: 200px;
+        height: 200px;
+    }
+
+    .retro-face {
+        width: 150px;
+        height: 150px;
+    }
+
+    .eye {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mouth {
+        width: 40px;
+        height: 15px;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .project-card p {
+        font-size: 0.8rem;
+    }
+
+    .social-links {
+        gap: 1.5rem;
+    }
+
+    .social-links a {
+        font-size: 1.2rem;
+    }
+
+    .contact-info p {
+        font-size: 1rem;
+    }
+}
+
+/* Add smooth scrolling for the whole page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+    .btn {
+        padding: 1rem 2rem;
+    }
+}
+
+/* Fix potential overflow issues */
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* Ensure images are responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Improve form elements on mobile */
+input, textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Add better spacing for mobile */
+section {
+    padding: 3rem 5%;
+}
+
+@media (max-width: 576px) {
+    section {
+        padding: 2rem 5%;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+} 
