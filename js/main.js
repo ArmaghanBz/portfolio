@@ -1,126 +1,253 @@
 // Main JavaScript file
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize mobile menu styles
-    const navLinks = document.querySelector('.nav-links');
-    const navToggle = document.querySelector('.nav-toggle');
+    // Greensock Animations
+    gsap.registerPlugin(ScrollTrigger);
 
-    if (navLinks && navToggle) {
-        navLinks.style.display = 'none';
-        navToggle.addEventListener('click', () => {
-            navLinks.style.display = navLinks.style.display === 'none' ? 'flex' : 'none';
-        });
-    }
+    initAnimations();
+    initNavigation();
+    initParticles();
+});
 
-    // Add active class to navigation links on scroll
-    const sections = document.querySelectorAll('section');
-    const navItems = document.querySelectorAll('.nav-links a');
+function initParticles() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
 
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (pageYOffset >= sectionTop - 60) {
-                current = section.getAttribute('id');
-            }
-        });
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
 
-        navItems.forEach(item => {
-            item.classList.remove('active');
-            if (item.getAttribute('href').slice(1) === current) {
-                item.classList.add('active');
+    // Configuration
+    const particleCount = window.innerWidth < 768 ? 60 : 120;
+    const connectionDistance = 150;
+    const mouseDistance = 200;
+
+    // Mouse state
+    let mouse = { x: null, y: null };
+
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    // Click Burst Interaction
+    window.addEventListener('mousedown', (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        particles.forEach(p => {
+            const dx = p.x - mouseX;
+            const dy = p.y - mouseY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 300) {
+                const angle = Math.atan2(dy, dx);
+                const force = (300 - distance) / 10; // Stronger force closer to center
+                p.vx += Math.cos(angle) * force;
+                p.vy += Math.sin(angle) * force;
             }
         });
     });
 
-    // Add typing effect to hero text
-    const heroText = document.querySelector('.hero h1');
-    if (heroText) {
-        const text = heroText.textContent;
-        heroText.textContent = '';
-        let i = 0;
+    window.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
 
-        function typeWriter() {
-            if (i < text.length) {
-                heroText.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            }
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    resize();
+    window.addEventListener('resize', () => {
+        resize();
+        init();
+    });
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            // Parallax: velocity linked to size. Larger particles (closer) move faster.
+            // Base speed range: 0.2 to 1.5
+            this.size = Math.random() * 2 + 1; // Size 1 to 3
+            const speedFactor = this.size * 0.15;
+            this.vx = (Math.random() - 0.5) * speedFactor;
+            this.vy = (Math.random() - 0.5) * speedFactor;
+
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.density = (Math.random() * 30) + 1;
+            // Friction for bust effect
+            this.friction = 0.96;
         }
 
-        typeWriter();
+        update() {
+            // Apply friction to velocity (stabilize burst)
+            // But we want to maintain a minimum ambient movement
+            if (Math.abs(this.vx) > 2 || Math.abs(this.vy) > 2) {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+            }
+
+            // Mouse Repel interaction
+            if (mouse.x != null) {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < mouseDistance) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    const force = (mouseDistance - distance) / mouseDistance;
+                    const directionX = forceDirectionX * force * this.density;
+                    const directionY = forceDirectionY * force * this.density;
+
+                    this.x -= directionX;
+                    this.y -= directionY;
+                }
+            }
+
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off edges with damping
+            if (this.x < 0 || this.x > width) this.vx = -this.vx;
+            if (this.y < 0 || this.y > height) this.vy = -this.vy;
+        }
+
+        draw() {
+            // Opacity based on size for depth perception
+            // Larger (closer) particles are slightly more opaque
+            const opacity = this.size * 0.1 + 0.1;
+            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+        }
     }
 
-    // Add scroll progress indicator
-    const progressBar = document.createElement('div');
-    progressBar.className = 'scroll-progress';
-    document.body.appendChild(progressBar);
+    function init() {
+        particles = [];
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+    }
 
-    window.addEventListener('scroll', () => {
-        const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = (window.scrollY / windowHeight) * 100;
-        progressBar.style.width = `${progress}%`;
-    });
+    // Breathing effect variable
+    let breath = 0;
 
-    // Add hover effect to skill items
-    const skillItems = document.querySelectorAll('.skill-category li');
-    skillItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            item.style.transform = 'translateX(10px)';
-            item.style.transition = 'transform 0.3s ease';
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Pulse logic for breathing connections
+        breath += 0.03;
+        const breathFactor = (Math.sin(breath) + 1) / 2 * 0.5 + 0.5; // Oscillates between 0.5 and 1
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+
+            // Draw connections
+            for (let j = i; j < particles.length; j++) {
+                let dx = particles[i].x - particles[j].x;
+                let dy = particles[i].y - particles[j].y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < connectionDistance) {
+                    ctx.beginPath();
+                    // Basic opacity based on distance
+                    let opacity = 1 - (distance / connectionDistance);
+                    // Multiply by breathing factor
+                    opacity = opacity * 0.15 * breathFactor;
+
+                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity})`; // Accent color
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+}
+
+function initAnimations() {
+    // Hero Animation
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    tl.from('.eyebrow', { y: 20, opacity: 0, duration: 0.6 })
+        .from('.hero h1', { y: 30, opacity: 0, duration: 0.8 }, "-=0.4")
+        .from('.subtitle', { y: 20, opacity: 0, duration: 0.6 }, "-=0.6")
+        .from('.description', { y: 20, opacity: 0, duration: 0.6 }, "-=0.5")
+        .from('.cta-group', { y: 20, opacity: 0, duration: 0.6 }, "-=0.4")
+        .from('.hero-visual', { scale: 0.8, opacity: 0, duration: 1.5, ease: "slow(0.7, 0.7, false)" }, "-=1");
+
+    // Fade Up Elements on Scroll
+    const fadeUpElements = gsap.utils.toArray('.project-card, .skill-group, .contact-wrapper');
+
+    fadeUpElements.forEach(element => {
+        gsap.from(element, {
+            scrollTrigger: {
+                trigger: element,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            },
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out"
         });
-
-        item.addEventListener('mouseleave', () => {
-            item.style.transform = 'translateX(0)';
-        });
     });
+}
 
-    // Add particle effect to project cards
-    const projectCards = document.querySelectorAll('.project-card');
-    projectCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+function initNavigation() {
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
 
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        });
-    });
-
-    // Initialize AOS (Animate On Scroll) for elements
-    const animatedElements = document.querySelectorAll('.fade-in');
-    animatedElements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    });
-
-    // Add intersection observer for animated elements
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target);
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            const isOpened = navLinks.style.display === 'flex';
+            if (isOpened) {
+                navLinks.style.display = 'none';
+                // Add mobile menu animation out logic here if needed
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '80px';
+                navLinks.style.left = '0';
+                navLinks.style.width = '100%';
+                navLinks.style.background = 'var(--surface-color)';
+                navLinks.style.padding = '2rem';
+                navLinks.style.borderBottom = '1px solid var(--glass-border)';
             }
         });
-    }, {
-        threshold: 0.1
-    });
+    }
 
-    animatedElements.forEach(element => observer.observe(element));
+    // Smooth Scroll for Anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
 
-    // Loading Screen
-    const loadingScreen = document.querySelector('.loading-screen');
-    
-    // Hide loading screen after content is loaded
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }, 1500); // Show loading screen for at least 1.5 seconds
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // Close mobile menu if open
+                if (window.innerWidth <= 768 && navLinks) {
+                    navLinks.style.display = 'none';
+                }
+
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
-}); 
+}
