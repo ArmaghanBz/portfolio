@@ -5,175 +5,136 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initAnimations();
     initNavigation();
-    initParticles();
+    init3DScene();
 });
 
-function initParticles() {
+function init3DScene() {
     const canvas = document.getElementById('bg-canvas');
-    if (!canvas) return;
+    if (!canvas || typeof THREE === 'undefined') return;
 
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0B0A1D, 0.015);
 
-    // Configuration
-    const particleCount = window.innerWidth < 768 ? 60 : 120;
-    const connectionDistance = 150;
-    const mouseDistance = 200;
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
 
-    // Mouse state
-    let mouse = { x: null, y: null };
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 1000;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for(let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 150; 
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.15,
+        color: 0xffcc00,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    // Abstract game dev elements (floating geometry primitives)
+    const geometries = [
+        new THREE.TorusGeometry(3, 0.5, 16, 50),
+        new THREE.OctahedronGeometry(3, 0),
+        new THREE.IcosahedronGeometry(4, 0),
+        new THREE.BoxGeometry(4, 4, 4)
+    ];
+
+    const objectsMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xff3366, 
+        wireframe: true, 
+        transparent: true, 
+        opacity: 0.25 
     });
 
-    // Click Burst Interaction
-    window.addEventListener('mousedown', (e) => {
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-
-        particles.forEach(p => {
-            const dx = p.x - mouseX;
-            const dy = p.y - mouseY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < 300) {
-                const angle = Math.atan2(dy, dx);
-                const force = (300 - distance) / 10; // Stronger force closer to center
-                p.vx += Math.cos(angle) * force;
-                p.vy += Math.sin(angle) * force;
-            }
+    const floatingObjects = [];
+    for(let i = 0; i < 6; i++) {
+        const mesh = new THREE.Mesh(geometries[Math.floor(Math.random() * geometries.length)], objectsMaterial);
+        mesh.position.x = (Math.random() - 0.5) * 60;
+        mesh.position.y = (Math.random() - 0.5) * 40;
+        mesh.position.z = (Math.random() - 0.5) * 40 - 10;
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        
+        const scale = Math.random() * 0.5 + 0.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        group.add(mesh);
+        
+        floatingObjects.push({
+            mesh: mesh,
+            speedX: (Math.random() - 0.5) * 0.01,
+            speedY: (Math.random() - 0.5) * 0.01,
+            floatSpeed: Math.random() * 0.02 + 0.01,
+            floatOffset: Math.random() * Math.PI * 2
         });
-    });
-
-    window.addEventListener('mouseleave', () => {
-        mouse.x = null;
-        mouse.y = null;
-    });
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
     }
 
-    resize();
+    // Grid Helper for that game engine / 3D space feel
+    const gridHelper = new THREE.GridHelper(200, 50, 0x00f0ff, 0x00f0ff);
+    gridHelper.position.y = -20;
+    gridHelper.material.opacity = 0.1;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+
+    // Interactive mouse
+    let mouseX = 0;
+    let mouseY = 0;
+    
+    document.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX - window.innerWidth / 2);
+        mouseY = (event.clientY - window.innerHeight / 2);
+    });
+
     window.addEventListener('resize', () => {
-        resize();
-        init();
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    class Particle {
-        constructor() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            // Parallax: velocity linked to size. Larger particles (closer) move faster.
-            // Base speed range: 0.2 to 1.5
-            this.size = Math.random() * 2 + 1; // Size 1 to 3
-            const speedFactor = this.size * 0.15;
-            this.vx = (Math.random() - 0.5) * speedFactor;
-            this.vy = (Math.random() - 0.5) * speedFactor;
-
-            this.baseX = this.x;
-            this.baseY = this.y;
-            this.density = (Math.random() * 30) + 1;
-            // Friction for bust effect
-            this.friction = 0.96;
-        }
-
-        update() {
-            // Apply friction to velocity (stabilize burst)
-            // But we want to maintain a minimum ambient movement
-            if (Math.abs(this.vx) > 2 || Math.abs(this.vy) > 2) {
-                this.vx *= this.friction;
-                this.vy *= this.friction;
-            }
-
-            // Mouse Repel interaction
-            if (mouse.x != null) {
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < mouseDistance) {
-                    const forceDirectionX = dx / distance;
-                    const forceDirectionY = dy / distance;
-                    const force = (mouseDistance - distance) / mouseDistance;
-                    const directionX = forceDirectionX * force * this.density;
-                    const directionY = forceDirectionY * force * this.density;
-
-                    this.x -= directionX;
-                    this.y -= directionY;
-                }
-            }
-
-            this.x += this.vx;
-            this.y += this.vy;
-
-            // Bounce off edges with damping
-            if (this.x < 0 || this.x > width) this.vx = -this.vx;
-            if (this.y < 0 || this.y > height) this.vy = -this.vy;
-        }
-
-        draw() {
-            // Opacity based on size for depth perception
-            // Larger (closer) particles are slightly more opaque
-            const opacity = this.size * 0.1 + 0.1;
-            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.closePath();
-            ctx.fill();
-        }
-    }
-
-    function init() {
-        particles = [];
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-    }
-
-    // Breathing effect variable
-    let breath = 0;
+    const clock = new THREE.Clock();
 
     function animate() {
-        ctx.clearRect(0, 0, width, height);
-
-        // Pulse logic for breathing connections
-        breath += 0.03;
-        const breathFactor = (Math.sin(breath) + 1) / 2 * 0.5 + 0.5; // Oscillates between 0.5 and 1
-
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-
-            // Draw connections
-            for (let j = i; j < particles.length; j++) {
-                let dx = particles[i].x - particles[j].x;
-                let dy = particles[i].y - particles[j].y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < connectionDistance) {
-                    ctx.beginPath();
-                    // Basic opacity based on distance
-                    let opacity = 1 - (distance / connectionDistance);
-                    // Multiply by breathing factor
-                    opacity = opacity * 0.15 * breathFactor;
-
-                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity})`; // Accent color
-                    ctx.lineWidth = 1;
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
         requestAnimationFrame(animate);
-    }
+        const elapsedTime = clock.getElapsedTime();
 
-    init();
+        // Mouse interaction
+        const targetX = mouseX * 0.001;
+        const targetY = mouseY * 0.001;
+        
+        group.rotation.y += 0.02 * (targetX - group.rotation.y);
+        group.rotation.x += 0.02 * (targetY - group.rotation.x);
+        
+        particlesMesh.rotation.y = elapsedTime * 0.05;
+
+        // Animate objects
+        floatingObjects.forEach(obj => {
+            obj.mesh.rotation.x += obj.speedX;
+            obj.mesh.rotation.y += obj.speedY;
+            obj.mesh.position.y += Math.sin(elapsedTime * 2 + obj.floatOffset) * obj.floatSpeed;
+        });
+
+        // Scroll interaction
+        const scrollY = window.scrollY;
+        camera.position.y = -scrollY * 0.02;
+        camera.position.z = 30 + scrollY * 0.01;
+
+        renderer.render(scene, camera);
+    }
+    
     animate();
 }
 

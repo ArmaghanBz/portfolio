@@ -1,13 +1,13 @@
 /* Modern Minimalist Portfolio - Antigravity Style */
 
 :root {
-    /* Colors - Dark Mode */
-    --bg-color: #050505;
-    --surface-color: #0f0f0f;
+    /* Colors - Lively Cyberpunk Theme */
+    --bg-color: #0B0A1D;
+    --surface-color: #1A1631;
     --text-primary: #ffffff;
-    --text-secondary: #9ca3af;
-    --accent-color: #38bdf8;
-    --accent-glow: rgba(56, 189, 248, 0.15);
+    --text-secondary: #b3b2c6;
+    --accent-color: #FF3366;
+    --accent-glow: rgba(255, 51, 102, 0.3);
 
     /* Typography */
     --font-main: 'Inter', sans-serif;
@@ -17,8 +17,8 @@
     --header-height: 80px;
 
     /* Effects */
-    --glass-bg: rgba(15, 15, 15, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(26, 22, 49, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --glass-blur: blur(12px);
     --transition-base: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -193,7 +193,7 @@ ul {
     line-height: 1.1;
     letter-spacing: -0.03em;
     margin-bottom: 1.5rem;
-    background: linear-gradient(to right, #fff, #999);
+    background: linear-gradient(45deg, #00f0ff, #ff3366, #ffcc00);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -218,19 +218,74 @@ ul {
     gap: 1rem;
 }
 
-/* Background visual */
+/* Animated Hero Visual */
 .hero-visual {
     position: absolute;
-    right: 0;
+    right: 5%;
     top: 50%;
     transform: translateY(-50%);
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+    width: 400px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.6;
 }
+
+/* Fallback styles in case user swaps for a real GIF */
+.hero-visual img {
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 0 30px var(--accent-glow);
+}
+
+/* 3D Glowing Cube Animation */
+.cube-wrapper {
+    width: 200px;
+    height: 200px;
+    perspective: 1000px;
+}
+
+.cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: rotateCube 12s infinite linear;
+}
+
+@keyframes rotateCube {
+    0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+    100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg); }
+}
+
+.cube-face {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 240, 255, 0.05); /* Cyberpunk tint */
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-glow), inset 0 0 15px var(--accent-glow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cube-face::after {
+    content: "</>";
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--accent-color);
+    opacity: 0.5;
+}
+
+.cube-face.front  { transform: rotateY(  0deg) translateZ(100px); }
+.cube-face.back   { transform: rotateY(180deg) translateZ(100px); }
+.cube-face.right  { transform: rotateY( 90deg) translateZ(100px); }
+.cube-face.left   { transform: rotateY(-90deg) translateZ(100px); }
+.cube-face.top    { transform: rotateX( 90deg) translateZ(100px); }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(100px); }
 
 /* Projects Section */
 .projects {
@@ -268,10 +323,26 @@ ul {
     background: var(--surface-color);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 2.5rem;
     transition: var(--transition-base);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.project-content {
+    padding: 2.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card:hover {
@@ -311,6 +382,8 @@ ul {
     gap: 0.5rem;
     font-weight: 500;
     border-bottom: 1px solid transparent;
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .project-link:hover {
